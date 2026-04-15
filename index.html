@@ -23,13 +23,101 @@
         
         body {
             font-family: 'Noto Serif SC', serif;
-            background: var(--void-black);
+            background: #050505;
             color: var(--bone-white);
             min-height: 100vh;
             overflow-x: hidden;
         }
         
+        /* 全屏场景背景 */
+        #scene-bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0;
+            transition: opacity 1.5s ease;
+            z-index: 0;
+            filter: brightness(0.25) saturate(0.7);
+        }
+        #scene-bg.active { opacity: 1; }
+        #scene-bg::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(ellipse at center, transparent 20%, rgba(0,0,0,0.7) 100%);
+        }
+        
+        @keyframes symbolPulse {
+            0%, 100% { transform: scale(1); opacity: 0.6; }
+            50% { transform: scale(1.05); opacity: 0.4; }
+        }
+        
+        /* 立绘区域 */
+        #portrait-area {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 200px;
+            height: 380px;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            pointer-events: none;
+            transition: opacity 0.8s ease;
+            opacity: 0;
+        }
+        #portrait-area.visible { opacity: 1; }
+        
+        .portrait-card {
+            width: 180px;
+            height: 340px;
+            border: 2px solid rgba(139, 0, 0, 0.6);
+            border-radius: 8px;
+            background: rgba(10, 10, 10, 0.85);
+            box-shadow: 0 0 30px rgba(139, 0, 0, 0.4);
+            overflow: hidden;
+            position: relative;
+        }
+        .portrait-card.entering {
+            animation: portraitEnter 0.8s ease forwards;
+        }
+        @keyframes portraitEnter {
+            0% { opacity: 0; transform: translateX(40px); box-shadow: 0 0 0 rgba(139,0,0,0); }
+            40% { box-shadow: 0 0 60px rgba(139, 0, 0, 0.9); }
+            100% { opacity: 1; transform: translateX(0); box-shadow: 0 0 30px rgba(139,0,0,0.4); }
+        }
+        .portrait-name {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            background: linear-gradient(transparent, rgba(10,10,10,0.98));
+            padding: 40px 10px 10px;
+            font-family: 'ZCOOL XiaoWei', serif;
+            font-size: 14px;
+            color: var(--incense-gold);
+            text-align: center;
+            letter-spacing: 3px;
+        }
+        .portrait-card img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            object-position: top;
+            filter: contrast(1.15) saturate(0.5) brightness(0.75) sepia(0.25);
+        }
+        .portrait-card .portrait-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(160deg, rgba(139,0,0,0.12) 0%, transparent 40%, rgba(0,0,0,0.5) 100%);
+            pointer-events: none;
+        }
+        
         #game-container {
+            position: relative;
+            z-index: 1;
             max-width: 900px;
             margin: 0 auto;
             padding: 20px;
@@ -51,6 +139,15 @@
             z-index: 1000;
             transition: opacity 1.5s ease;
         }
+        #title-screen::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=60') center/cover no-repeat;
+            opacity: 0.15;
+            filter: brightness(0.3) saturate(0.5);
+        }
+        #title-screen > * { position: relative; z-index: 1; }
         
         #title-screen.hidden {
             opacity: 0;
@@ -468,7 +565,13 @@
             }
         }
         
-        /* 极端状态警告效果 */
+        @media (max-width: 1100px) {
+            #portrait-area { display: none; }
+        }
+        @media (max-width: 768px), (orientation: portrait) {
+            #scene-bg { filter: brightness(0.18) saturate(0.6); }
+            .title-char { font-size: 48px; letter-spacing: 8px; }
+            .subtitle { font-size: 14px; letter-spacing: 4px; }
         @keyframes panicShake {
             0%, 100% { transform: translate(0); }
             10% { transform: translate(-8px, 3px); }
@@ -570,7 +673,9 @@
         <button class="start-btn" onclick="startGame()">踏入仙途</button>
     </div>
     
+    <div id="scene-bg" class="scene-bg"></div>
     <div id="game-container">
+        <div id="portrait-area" class="portrait-area"></div>
         <div id="game-ui">
             <div id="status-bar">
                 <div class="stat">
@@ -648,6 +753,7 @@
                     '旁边站着一位白衣青年，正冷漠地看着你们这群新来的弟子。'
                 ],
                 dialogue: { speaker: '白衣青年', text: '我是你们的大师兄李玄清。想入青云宗，先过三关。第一关，拜山门。' },
+                portrait: { name: '李玄清', mood: '审视' },
                 choices: [
                     { text: '恭敬地对着石像行礼', action: 'pay_respect' },
                     { text: '注意到烟气下沉，尝试点燃自己的手指', action: 'burn_finger', cost: '神智-10' },
@@ -977,6 +1083,7 @@
                     '老者转过身，露出一张布满皱纹的脸。他的眼睛是浑浊的白色——没有瞳孔。'
                 ],
                 dialogue: { speaker: '莫长老', text: '新来的？我是丹房的莫长老。你们要做的很简单——帮我炼一炉丹。' },
+                portrait: { name: '莫长老', mood: '笑里藏刀' },
                 choices: [
                     { text: '"是，长老。"等待指示', action: 'wait_instructions' },
                     { text: '"敢问长老，这炉中煮的是什么？"', action: 'ask_furnace', cost: '神智-5' },
@@ -1346,6 +1453,7 @@
                 effects: { sanity: -20, cultivation: 15, corruption: -5 },
                 flags: { impressed_elder: true },
                 dialogue: { speaker: '红袍长老', text: '你通过了祖师殿的试炼。从今天起，你就是青云宗的外门弟子了。' },
+                portrait: { name: '红袍长老', mood: '威严' },
                 choices: [
                     { text: '"多谢长老。"', action: 'disciple_life' }
                 ]
@@ -1995,6 +2103,12 @@
             currentScene = sceneId;
             gameState.visitedScenes.push(sceneId);
             
+            // 切换场景背景
+            updateSceneBackground(scene);
+            
+            // 显示立绘（如果场景有的话）
+            updateScenePortrait(scene);
+            
             document.getElementById('location-name').textContent = scene.location;
             const narrativeBox = document.getElementById('narrative-box');
             narrativeBox.innerHTML = '';
@@ -2053,6 +2167,157 @@
             updateStatusBars();
             updateVisualEffects();
             if (checkExtremeStates()) return;
+        }
+        
+        // 场景背景映射 - 每个场景对应一个氛围背景
+        const sceneBackgrounds = {
+            'start': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=80',
+            'first_trial': 'https://images.unsplash.com/photo-1518791841217-8f162f1e1131?w=1920&q=80',
+            'first_trial_2': 'https://images.unsplash.com/photo-1462275646964-a0e3571f4f93?w=1920&q=80',
+            'keep_asking': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1920&q=80',
+            'ask_taishui': 'https://images.unsplash.com/photo-1516979187457-637abb4f9353?w=1920&q=80',
+            'talk_self': 'https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=1920&q=80',
+            'help_souls': 'https://images.unsplash.com/photo-1447433589675-4aaa569f3e05?w=1920&q=80',
+            'meeting_mo': 'https://images.unsplash.com/photo-1508672019048-805c876b67e2?w=1920&q=80',
+            'take_pill': 'https://images.unsplash.com/photo-1516571748831-5d8178b118de?w=1920&q=80',
+            'use_own_blood': 'https://images.unsplash.com/photo-1530026405186-ed1f139313f3?w=1920&q=80',
+            'use_animal': 'https://images.unsplash.com/photo-1508672019048-805c876b67e2?w=1920&q=80',
+            'alchemy_room': 'https://images.unsplash.com/photo-1516571748831-5d8178b118de?w=1920&q=80',
+            'become_apprentice': 'https://images.unsplash.com/photo-1499336315816-097655dcfbda?w=1920&q=80',
+            'enter_forbidden': 'https://images.unsplash.com/photo-1462275646964-a0e3571f4f93?w=1920&q=80',
+            'resist_statue': 'https://images.unsplash.com/photo-1481009137526-2a9a99f60fe1?w=1920&q=80',
+            'allow_statue': 'https://images.unsplash.com/photo-1518259102261-b9a99f60fe1e?w=1920&q=80',
+            'ask_ancestor': 'https://images.unsplash.com/photo-1516979187457-637abb4f9353?w=1920&q=80',
+            'read_book': 'https://images.unsplash.com/photo-1516979187457-637abb4f9353?w=1920&q=80',
+            'hide_book': 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=1920&q=80',
+            'endgame_choice': 'https://images.unsplash.com/photo-1518259102261-b9a99f60fe1e?w=1920&q=80',
+            'choose_embrace': 'https://images.unsplash.com/photo-1516414447565-b14be0adf13e?w=1920&q=80',
+            'choose_resist': 'https://images.unsplash.com/photo-1518259102261-b9a99f60fe1e?w=1920&q=80',
+            'ending_corrupted': 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=1920&q=80',
+            'ending_sane': 'https://images.unsplash.com/photo-1530026405186-ed1f139313f3?w=1920&q=80',
+            'ending_mad': 'https://images.unsplash.com/photo-1501691223387-dd0500403074?w=1920&q=80',
+            'default': 'https://images.unsplash.com/photo-1501691223387-dd0500403074?w=1920&q=80'
+        };
+        
+        function updateSceneBackground(scene) {
+            const bg = document.getElementById('scene-bg');
+            const imgUrl = scene.bg || sceneBackgrounds[sceneId] || sceneBackgrounds['default'];
+            if (bg.style.backgroundImage !== `url("${imgUrl}")`) {
+                bg.classList.remove('active');
+                setTimeout(() => {
+                    bg.style.backgroundImage = `url("${imgUrl}")`;
+                    bg.classList.add('active');
+                }, 300);
+            }
+        }
+        
+        // NPC 立绘配置 - 使用 Unicode 符号和 CSS 绘制风格化角色
+        const npcPortraits = {
+            '莫长老': {
+                color: 'rgba(139, 90, 43, 0.9)',
+                borderColor: 'rgba(201, 162, 39, 0.7)',
+                symbol: '☯',
+                accent: 'rgba(201, 162, 39, 1)',
+                bgGrad: 'linear-gradient(180deg, rgba(20,15,5,0.9) 0%, rgba(40,25,10,0.8) 100%)'
+            },
+            '太岁': {
+                color: 'rgba(0, 60, 0, 0.9)',
+                borderColor: 'rgba(0, 255, 0, 0.7)',
+                symbol: '⦿',
+                accent: 'rgba(0, 255, 0, 1)',
+                bgGrad: 'linear-gradient(180deg, rgba(0,20,0,0.9) 0%, rgba(0,40,0,0.8) 100%)'
+            },
+            '李玄清': {
+                color: 'rgba(180, 200, 220, 0.9)',
+                borderColor: 'rgba(200, 220, 240, 0.6)',
+                symbol: '剑',
+                accent: 'rgba(220, 235, 250, 0.9)',
+                bgGrad: 'linear-gradient(180deg, rgba(20,25,35,0.9) 0%, rgba(40,50,70,0.8) 100%)'
+            },
+            '红袍长老': {
+                color: 'rgba(139, 30, 30, 0.9)',
+                borderColor: 'rgba(200, 50, 50, 0.7)',
+                symbol: '鼎',
+                accent: 'rgba(220, 80, 60, 1)',
+                bgGrad: 'linear-gradient(180deg, rgba(30,10,10,0.9) 0%, rgba(60,20,20,0.8) 100%)'
+            },
+            '你': {
+                color: 'rgba(30, 20, 50, 0.9)',
+                borderColor: 'rgba(139, 0, 0, 0.7)',
+                symbol: '◈',
+                accent: 'rgba(200, 180, 150, 1)',
+                bgGrad: 'linear-gradient(180deg, rgba(15,10,20,0.9) 0%, rgba(30,20,40,0.8) 100%)'
+            },
+            '你自己': {
+                color: 'rgba(61, 26, 74, 0.9)',
+                borderColor: 'rgba(180, 100, 200, 0.7)',
+                symbol: '◈',
+                accent: 'rgba(180, 100, 200, 1)',
+                bgGrad: 'linear-gradient(180deg, rgba(30,10,40,0.9) 0%, rgba(61,26,74,0.8) 100%)'
+            }
+        };
+        
+        function updateScenePortrait(scene) {
+            const area = document.getElementById('portrait-area');
+            
+            if (!scene.portrait) {
+                area.classList.remove('visible');
+                setTimeout(() => { area.innerHTML = ''; }, 800);
+                return;
+            }
+            
+            const npc = npcPortraits[scene.portrait.name] || npcPortraits['莫长老'];
+            area.innerHTML = `
+                <div class="portrait-card entering" style="
+                    border-color: ${npc.borderColor};
+                    box-shadow: 0 0 30px ${npc.borderColor.replace('0.7', '0.4')};
+                    background: ${npc.bgGrad};
+                ">
+                    <div style="
+                        width: 100%; height: 100%;
+                        display: flex; align-items: center; justify-content: center;
+                        flex-direction: column;
+                        position: relative;
+                    ">
+                        <!-- NPC 符号 -->
+                        <div style="
+                            font-size: 120px;
+                            color: ${npc.accent};
+                            text-shadow: 0 0 40px ${npc.accent}, 0 0 80px ${npc.color};
+                            line-height: 1;
+                            opacity: 0.6;
+                            animation: symbolPulse 3s ease infinite;
+                        ">${npc.symbol}</div>
+                        <!-- 氛围文字 -->
+                        <div style="
+                            position: absolute; bottom: 50px; left: 0; right: 0;
+                            text-align: center;
+                            font-size: 11px;
+                            color: rgba(200,180,150,0.4);
+                            letter-spacing: 4px;
+                            font-family: 'Noto Serif SC', serif;
+                        ">${scene.portrait.mood || '???'}</div>
+                        <!-- 裂痕装饰 -->
+                        <div style="
+                            position: absolute; top: 10px; right: 10px;
+                            width: 40px; height: 40px;
+                            border-top: 1px solid ${npc.accent};
+                            border-right: 1px solid ${npc.accent};
+                            opacity: 0.3;
+                        "></div>
+                        <div style="
+                            position: absolute; bottom: 10px; left: 10px;
+                            width: 30px; height: 30px;
+                            border-bottom: 1px solid ${npc.accent};
+                            border-left: 1px solid ${npc.accent};
+                            opacity: 0.3;
+                        "></div>
+                    </div>
+                    <div class="portrait-overlay"></div>
+                    <div class="portrait-name">${scene.portrait.name}</div>
+                </div>
+            `;
+            area.classList.add('visible');
         }
         
         function updateStatusBars() {
