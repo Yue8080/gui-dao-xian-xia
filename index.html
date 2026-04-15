@@ -23,101 +23,13 @@
         
         body {
             font-family: 'Noto Serif SC', serif;
-            background: #050505;
+            background: var(--void-black);
             color: var(--bone-white);
             min-height: 100vh;
             overflow-x: hidden;
         }
         
-        /* 全屏场景背景 */
-        #scene-bg {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            opacity: 0;
-            transition: opacity 1.5s ease;
-            z-index: 0;
-            filter: brightness(0.4) saturate(0.8) sepia(0.05);
-        }
-        #scene-bg.active { opacity: 1; }
-        #scene-bg::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.45) 100%);
-        }
-        
-        @keyframes symbolPulse {
-            0%, 100% { transform: scale(1); opacity: 0.6; }
-            50% { transform: scale(1.05); opacity: 0.4; }
-        }
-        
-        /* 立绘区域 */
-        #portrait-area {
-            position: fixed;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 200px;
-            height: 380px;
-            z-index: 10;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            pointer-events: none;
-            transition: opacity 0.8s ease;
-            opacity: 0;
-        }
-        #portrait-area.visible { opacity: 1; }
-        
-        .portrait-card {
-            width: 180px;
-            height: 340px;
-            border: 2px solid rgba(139, 0, 0, 0.6);
-            border-radius: 8px;
-            background: rgba(10, 10, 10, 0.85);
-            box-shadow: 0 0 30px rgba(139, 0, 0, 0.4);
-            overflow: hidden;
-            position: relative;
-        }
-        .portrait-card.entering {
-            animation: portraitEnter 0.8s ease forwards;
-        }
-        @keyframes portraitEnter {
-            0% { opacity: 0; transform: translateX(40px); box-shadow: 0 0 0 rgba(139,0,0,0); }
-            40% { box-shadow: 0 0 60px rgba(139, 0, 0, 0.9); }
-            100% { opacity: 1; transform: translateX(0); box-shadow: 0 0 30px rgba(139,0,0,0.4); }
-        }
-        .portrait-name {
-            position: absolute;
-            bottom: 0; left: 0; right: 0;
-            background: linear-gradient(transparent, rgba(10,10,10,0.98));
-            padding: 40px 10px 10px;
-            font-family: 'ZCOOL XiaoWei', serif;
-            font-size: 14px;
-            color: var(--incense-gold);
-            text-align: center;
-            letter-spacing: 3px;
-        }
-        .portrait-card img {
-            width: 100%; height: 100%;
-            object-fit: cover;
-            object-position: top;
-            filter: contrast(1.15) saturate(0.5) brightness(0.75) sepia(0.25);
-        }
-        .portrait-card .portrait-overlay {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(160deg, rgba(139,0,0,0.12) 0%, transparent 40%, rgba(0,0,0,0.5) 100%);
-            pointer-events: none;
-        }
-        
         #game-container {
-            position: relative;
-            z-index: 1;
             max-width: 900px;
             margin: 0 auto;
             padding: 20px;
@@ -139,15 +51,6 @@
             z-index: 1000;
             transition: opacity 1.5s ease;
         }
-        #title-screen::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=60') center/cover no-repeat;
-            opacity: 0.15;
-            filter: brightness(0.3) saturate(0.5);
-        }
-        #title-screen > * { position: relative; z-index: 1; }
         
         #title-screen.hidden {
             opacity: 0;
@@ -374,16 +277,6 @@
             z-index: 999;
         }
         
-        .corruption-vignette {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 998;
-        }
-        
         .blood-vignette.active { opacity: 1; }
         
         #log-toggle {
@@ -565,100 +458,7 @@
             }
         }
         
-        @media (max-width: 1100px) {
-            #portrait-area { display: none; }
-        }
-        @media (max-width: 768px), (orientation: portrait) {
-            #scene-bg { filter: brightness(0.18) saturate(0.6); }
-            .title-char { font-size: 48px; letter-spacing: 8px; }
-            .subtitle { font-size: 14px; letter-spacing: 4px; }
-        @keyframes panicShake {
-            0%, 100% { transform: translate(0); }
-            10% { transform: translate(-8px, 3px); }
-            20% { transform: translate(8px, -3px); }
-            30% { transform: translate(-5px, 5px); }
-            40% { transform: translate(5px, -5px); }
-            50% { transform: translate(-3px, 3px); }
-            60% { transform: translate(3px, -3px); }
-            70% { transform: translate(-2px, 2px); }
-            80% { transform: translate(2px, -2px); }
-            90% { transform: translate(-1px, 1px); }
-        }
-        
-        .panic-mode {
-            animation: panicShake 0.15s ease infinite;
-        }
-        
-        .sanity-critical {
-            color: #ff4444 !important;
-            text-shadow: 0 0 10px rgba(255, 68, 68, 0.8);
-        }
-        
-        .corruption-critical {
-            color: #00ff00 !important;
-            text-shadow: 0 0 10px rgba(0, 255, 0, 0.8);
-        }
-        
-        .stat-value.sanity-critical {
-            animation: pulse 0.5s ease infinite alternate;
-        }
-        
-        .stat-value.corruption-critical {
-            animation: pulse 0.5s ease infinite alternate;
-        }
-        
-        @keyframes pulse {
-            from { opacity: 1; transform: scale(1); }
-            to { opacity: 0.6; transform: scale(1.1); }
-        }
-        
-        @keyframes corruptionPulse {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 0.6; }
-        }
-        
-        .corruption-vignette {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 998;
-            transition: opacity 1s ease;
-        }
-        
-        @keyframes sanityFlicker {
-            0%, 100% { opacity: 0; }
-            10%, 30%, 50%, 70%, 90% { opacity: 0.4; }
-            20%, 40%, 60%, 80% { opacity: 0; }
-        }
-        
-        .sanity-warning-overlay {
-            background: radial-gradient(ellipse at center, transparent 30%, rgba(61, 26, 74, 0.5) 100%);
-            animation: sanityFlicker 3s ease infinite;
-        }
-        
-        @keyframes corruptionSpread {
-            0% { background: radial-gradient(ellipse at center, transparent 50%, rgba(0, 100, 0, 0.2) 100%); }
-            50% { background: radial-gradient(ellipse at center, transparent 40%, rgba(0, 150, 0, 0.3) 100%); }
-            100% { background: radial-gradient(ellipse at center, transparent 30%, rgba(0, 200, 0, 0.4) 100%); }
-        }
-        
-        .corruption-warning-overlay {
-            animation: corruptionSpread 2s ease infinite;
-            opacity: 0;
-        }
-        
-        @keyframes corruptionMaxOverlay {
-            0%, 100% { opacity: 0.5; background: radial-gradient(ellipse at center, transparent 20%, rgba(0, 255, 0, 0.3) 100%); }
-            50% { opacity: 1; background: radial-gradient(ellipse at center, transparent 10%, rgba(0, 255, 0, 0.5) 100%); }
-        }
-        
-        .corruption-max-overlay {
-            animation: corruptionMaxOverlay 1s ease infinite;
-            opacity: 1 !important;
-        }
+        @media (max-height: 600px) and (orientation: landscape) {
             #title-screen { padding: 20px; }
             .title-char { font-size: 60px; }
             .subtitle { margin-top: 15px; font-size: 18px; }
@@ -673,9 +473,7 @@
         <button class="start-btn" onclick="startGame()">踏入仙途</button>
     </div>
     
-    <div id="scene-bg" class="scene-bg"></div>
     <div id="game-container">
-        <div id="portrait-area" class="portrait-area"></div>
         <div id="game-ui">
             <div id="status-bar">
                 <div class="stat">
@@ -713,8 +511,6 @@
     </div>
     
     <div class="blood-vignette" id="blood-vignette"></div>
-    <div class="corruption-vignette corruption-warning-overlay" id="corruption-vignette"></div>
-    <div class="corruption-vignette sanity-warning-overlay" id="sanity-vignette"></div>
     
     <button id="log-toggle" onclick="toggleLog()">阅历录</button>
     <div id="game-log">
@@ -753,7 +549,6 @@
                     '旁边站着一位白衣青年，正冷漠地看着你们这群新来的弟子。'
                 ],
                 dialogue: { speaker: '白衣青年', text: '我是你们的大师兄李玄清。想入青云宗，先过三关。第一关，拜山门。' },
-                portrait: { name: '李玄清', mood: '审视' },
                 choices: [
                     { text: '恭敬地对着石像行礼', action: 'pay_respect' },
                     { text: '注意到烟气下沉，尝试点燃自己的手指', action: 'burn_finger', cost: '神智-10' },
@@ -866,7 +661,6 @@
             
             'ask_taishui': {
                 location: '青云宗·山门',
-                portrait: { name: '太岁', mood: '远古低语' },
                 narrative: [
                     '"太岁是什么？"你问。',
                     '大师兄的表情变得复杂，他沉默了很久。',
@@ -928,7 +722,6 @@
             
             'first_trial': {
                 location: '青云宗·问心路',
-                portrait: { name: '你', mood: '心境动摇' },
                 narrative: [
                     '拜过山门后，你和其他新弟子被带到了一条山路上。',
                     '这条路很窄，两侧是浓密的雾气。你什么都看不见，只能看到脚下的石阶。',
@@ -1014,7 +807,6 @@
             
             'talk_self': {
                 location: '青云宗·问心路',
-                portrait: { name: '你自己', mood: '扭曲微笑' },
                 narrative: [
                     '你深吸一口气，问："你是谁？"',
                     '那个"自己"的笑容更诡异了，它慢慢走近你，贴近你的耳边说：',
@@ -1086,7 +878,6 @@
                     '老者转过身，露出一张布满皱纹的脸。他的眼睛是浑浊的白色——没有瞳孔。'
                 ],
                 dialogue: { speaker: '莫长老', text: '新来的？我是丹房的莫长老。你们要做的很简单——帮我炼一炉丹。' },
-                portrait: { name: '莫长老', mood: '笑里藏刀' },
                 choices: [
                     { text: '"是，长老。"等待指示', action: 'wait_instructions' },
                     { text: '"敢问长老，这炉中煮的是什么？"', action: 'ask_furnace', cost: '神智-5' },
@@ -1271,7 +1062,6 @@
             
             'help_souls': {
                 location: '青云宗·丹房',
-                portrait: { name: '莫长老', mood: '意味深长' },
                 narrative: [
                     '"敢问长老，如何帮助他们？"你问。',
                     '莫长老的表情变得复杂，他看着你，似乎在评估什么。',
@@ -1446,7 +1236,6 @@
             
             'resist_statue': {
                 location: '青云宗·祖师殿',
-                portrait: { name: '太岁', mood: '注视压迫' },
                 narrative: [
                     '你咬紧牙关，用尽全力抵抗那股入侵的力量。',
                     '你的脑海剧烈疼痛，像有什么东西在里面搅动。',
@@ -1458,7 +1247,6 @@
                 effects: { sanity: -20, cultivation: 15, corruption: -5 },
                 flags: { impressed_elder: true },
                 dialogue: { speaker: '红袍长老', text: '你通过了祖师殿的试炼。从今天起，你就是青云宗的外门弟子了。' },
-                portrait: { name: '红袍长老', mood: '威严' },
                 choices: [
                     { text: '"多谢长老。"', action: 'disciple_life' }
                 ]
@@ -1913,7 +1701,6 @@
             
             'read_book': {
                 location: '青云宗·藏书阁',
-                portrait: { name: '先人魂魄', mood: '怨念凝视' },
                 narrative: [
                     '你继续阅读，书页上写着：',
                     '"青云宗，乃当年封印太岁的修士所建，世代镇压。"',
@@ -2109,12 +1896,6 @@
             currentScene = sceneId;
             gameState.visitedScenes.push(sceneId);
             
-            // 切换场景背景
-            updateSceneBackground(scene, sceneId);
-            
-            // 显示立绘（如果场景有的话）
-            updateScenePortrait(scene);
-            
             document.getElementById('location-name').textContent = scene.location;
             const narrativeBox = document.getElementById('narrative-box');
             narrativeBox.innerHTML = '';
@@ -2171,204 +1952,6 @@
                 gameState.cultivationStage = getCultivationStage();
             }
             updateStatusBars();
-            updateVisualEffects();
-            if (checkExtremeStates()) return;
-        }
-        
-        // 场景背景映射 - 每个场景对应一个氛围背景
-        const sceneBackgrounds = {
-            'start': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=80',
-            'first_trial': 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1920&q=80',
-            'first_trial_2': 'https://images.unsplash.com/photo-1447433589675-4aaa569f3e05?w=1920&q=80',
-            'keep_asking': 'https://images.unsplash.com/photo-1545459720-aac8509eb02c?w=1920&q=80',
-            'ask_taishui': 'https://images.unsplash.com/photo-1518998053901-5348d3961a04?w=1920&q=80',
-            'talk_self': 'https://images.unsplash.com/photo-1448375240586-882707db888b?w=1920&q=80',
-            'help_souls': 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1920&q=80',
-            'meeting_mo': 'https://images.unsplash.com/photo-1545569341-9eb8b30979d9?w=1920&q=80',
-            'take_pill': 'https://images.unsplash.com/photo-1504805572947-34fad45aed93?w=1920&q=80',
-            'use_own_blood': 'https://images.unsplash.com/photo-1505664194779-8beaceb93744?w=1920&q=80',
-            'use_animal': 'https://images.unsplash.com/photo-1508672019048-805c876b67e2?w=1920&q=80',
-            'alchemy_room': 'https://images.unsplash.com/photo-1524661135-423995f22d0b?w=1920&q=80',
-            'become_apprentice': 'https://images.unsplash.com/photo-1525811902-f2342640856e?w=1920&q=80',
-            'enter_forbidden': 'https://images.unsplash.com/photo-1518826778770-a729fb53327c?w=1920&q=80',
-            'resist_statue': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1920&q=80',
-            'allow_statue': 'https://images.unsplash.com/photo-1518259102261-b9a99f60fe1e?w=1920&q=80',
-            'ask_ancestor': 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1920&q=80',
-            'read_book': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1920&q=80',
-            'hide_book': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1920&q=80',
-            'endgame_choice': 'https://images.unsplash.com/photo-1518900632-46d1e4a4b1aa?w=1920&q=80',
-            'choose_embrace': 'https://images.unsplash.com/photo-1518826778770-a729fb53327c?w=1920&q=80',
-            'choose_resist': 'https://images.unsplash.com/photo-1518900632-46d1e4a4b1aa?w=1920&q=80',
-            'ending_corrupted': 'https://images.unsplash.com/photo-1518826778770-a729fb53327c?w=1920&q=80',
-            'ending_sane': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=80',
-            'ending_mad': 'https://images.unsplash.com/photo-1518259102261-b9a99f60fe1e?w=1920&q=80',
-            'default': 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1920&q=80'
-        };
-        
-        function updateSceneBackground(scene, sceneId) {
-            const bg = document.getElementById('scene-bg');
-            const imgUrl = scene.bg || sceneBackgrounds[sceneId] || sceneBackgrounds['default'];
-            if (bg.style.backgroundImage !== `url("${imgUrl}")`) {
-                bg.classList.remove('active');
-                setTimeout(() => {
-                    bg.style.backgroundImage = `url("${imgUrl}")`;
-                    bg.classList.add('active');
-                }, 300);
-            }
-        }
-        
-        // NPC 立绘配置 - 使用 Unicode 符号和 CSS 绘制风格化角色
-        const npcPortraits = {
-            '莫长老': {
-                color: 'rgba(139, 90, 43, 0.9)',
-                borderColor: 'rgba(201, 162, 39, 0.8)',
-                symbol: '☯',
-                accent: 'rgba(201, 162, 39, 1)',
-                title: '莫长老',
-                subtitle: '青云宗 · 炼虚境',
-                bgGrad: 'linear-gradient(160deg, rgba(30,20,5,0.92) 0%, rgba(60,40,10,0.85) 100%)'
-            },
-            '太岁': {
-                color: 'rgba(0, 80, 0, 0.9)',
-                borderColor: 'rgba(50, 255, 50, 0.8)',
-                symbol: '⦿',
-                accent: 'rgba(50, 255, 50, 1)',
-                title: '太岁',
-                subtitle: '禁忌 · 远古存在',
-                bgGrad: 'linear-gradient(160deg, rgba(0,25,0,0.92) 0%, rgba(0,50,0,0.85) 100%)'
-            },
-            '李玄清': {
-                color: 'rgba(80, 100, 130, 0.9)',
-                borderColor: 'rgba(160, 200, 240, 0.7)',
-                symbol: '剑',
-                accent: 'rgba(200, 225, 250, 0.9)',
-                title: '李玄清',
-                subtitle: '青云宗 · 金丹期',
-                bgGrad: 'linear-gradient(160deg, rgba(20,25,40,0.92) 0%, rgba(40,50,80,0.85) 100%)'
-            },
-            '红袍长老': {
-                color: 'rgba(139, 30, 30, 0.9)',
-                borderColor: 'rgba(220, 80, 50, 0.8)',
-                symbol: '鼎',
-                accent: 'rgba(255, 100, 60, 1)',
-                title: '红袍长老',
-                subtitle: '青云宗 · 元婴境',
-                bgGrad: 'linear-gradient(160deg, rgba(35,10,10,0.92) 0%, rgba(70,20,20,0.85) 100%)'
-            },
-            '你': {
-                color: 'rgba(60, 30, 80, 0.9)',
-                borderColor: 'rgba(180, 100, 200, 0.8)',
-                symbol: '◈',
-                accent: 'rgba(220, 180, 255, 1)',
-                title: '你',
-                subtitle: '修士 · 命运未定',
-                bgGrad: 'linear-gradient(160deg, rgba(20,10,30,0.92) 0%, rgba(40,20,60,0.85) 100%)'
-            },
-            '你自己': {
-                color: 'rgba(61, 26, 74, 0.9)',
-                borderColor: 'rgba(180, 100, 200, 0.8)',
-                symbol: '◈',
-                accent: 'rgba(220, 150, 255, 1)',
-                title: '你自己',
-                subtitle: '内心 · 幽暗低语',
-                bgGrad: 'linear-gradient(160deg, rgba(25,8,35,0.92) 0%, rgba(50,15,70,0.85) 100%)'
-            },
-            '先人魂魄': {
-                color: 'rgba(50, 50, 80, 0.9)',
-                borderColor: 'rgba(150, 180, 220, 0.6)',
-                symbol: '魂',
-                accent: 'rgba(180, 200, 230, 0.8)',
-                title: '先人魂魄',
-                subtitle: '怨念 · 残留执念',
-                bgGrad: 'linear-gradient(160deg, rgba(15,15,30,0.92) 0%, rgba(30,30,60,0.85) 100%)'
-            },
-            '问心镜': {
-                color: 'rgba(100, 100, 120, 0.9)',
-                borderColor: 'rgba(200, 200, 220, 0.7)',
-                symbol: '镜',
-                accent: 'rgba(230, 230, 250, 0.9)',
-                title: '问心镜',
-                subtitle: '天材 · 照见本心',
-                bgGrad: 'linear-gradient(160deg, rgba(30,30,45,0.92) 0%, rgba(60,60,90,0.85) 100%)'
-            }
-        };
-        
-        function updateScenePortrait(scene) {
-            const area = document.getElementById('portrait-area');
-            
-            if (!scene.portrait) {
-                area.classList.remove('visible');
-                setTimeout(() => { area.innerHTML = ''; }, 800);
-                return;
-            }
-            
-            const npc = npcPortraits[scene.portrait.name] || npcPortraits['莫长老'];
-            area.innerHTML = `
-                <div class="portrait-card entering" style="
-                    border-color: ${npc.borderColor};
-                    box-shadow: 0 0 40px ${npc.borderColor.replace('0.8', '0.35')}, inset 0 0 60px rgba(0,0,0,0.5);
-                    background: ${npc.bgGrad};
-                ">
-                    <div style="
-                        width: 100%; height: 100%;
-                        display: flex; flex-direction: column;
-                        align-items: center; justify-content: space-between;
-                        padding: 24px 12px 16px;
-                        position: relative;
-                    ">
-                        <!-- 顶部标题 -->
-                        <div style="text-align:center;">
-                            <div style="
-                                font-size: 22px;
-                                color: ${npc.accent};
-                                text-shadow: 0 0 20px ${npc.accent};
-                                font-family: 'Ma Shan Zheng', cursive;
-                                letter-spacing: 3px;
-                            ">${npc.title || scene.portrait.name}</div>
-                            <div style="
-                                font-size: 10px;
-                                color: rgba(200,180,150,0.5);
-                                letter-spacing: 2px;
-                                margin-top: 4px;
-                            ">${npc.subtitle || ''}</div>
-                        </div>
-                        <!-- NPC 符号（主视觉） -->
-                        <div style="
-                            font-size: 140px;
-                            color: ${npc.accent};
-                            text-shadow: 0 0 50px ${npc.accent}, 0 0 100px ${npc.color};
-                            line-height: 1;
-                            animation: symbolPulse 3s ease infinite;
-                            margin: 8px 0;
-                        ">${npc.symbol}</div>
-                        <!-- 底部氛围 -->
-                        <div style="
-                            font-size: 10px;
-                            color: rgba(200,180,150,0.35);
-                            letter-spacing: 4px;
-                            font-family: 'Noto Serif SC', serif;
-                            text-align: center;
-                        ">${scene.portrait.mood || '???'}</div>
-                        <!-- 装饰角 -->
-                        <div style="
-                            position: absolute; top: 12px; right: 12px;
-                            width: 30px; height: 30px;
-                            border-top: 1px solid ${npc.accent};
-                            border-right: 1px solid ${npc.accent};
-                            opacity: 0.25;
-                        "></div>
-                        <div style="
-                            position: absolute; bottom: 12px; left: 12px;
-                            width: 20px; height: 20px;
-                            border-bottom: 1px solid ${npc.accent};
-                            border-left: 1px solid ${npc.accent};
-                            opacity: 0.25;
-                        "></div>
-                    </div>
-                    <div class="portrait-overlay"></div>
-                </div>
-            `;
-            area.classList.add('visible');
         }
         
         function updateStatusBars() {
@@ -2378,78 +1961,6 @@
             document.getElementById('corruption-bar').style.width = gameState.corruption + '%';
             document.getElementById('cultivation-bar').style.width = gameState.cultivation + '%';
             document.getElementById('cultivation-value').textContent = gameState.cultivationStage;
-        }
-        
-        // 检查极端状态 - 神智归0或污染满值触发严重后果
-        function checkExtremeStates() {
-            if (gameState.sanity <= 0 && !gameState.flags.sanityCollapseTriggered) {
-                gameState.flags.sanityCollapseTriggered = true;
-                triggerSanityCollapse();
-                return true;
-            }
-            if (gameState.corruption >= 100 && !gameState.flags.corruptionMaxTriggered) {
-                gameState.flags.corruptionMaxTriggered = true;
-                triggerCorruptionMax();
-                return true;
-            }
-            return false;
-        }
-        
-        function triggerSanityCollapse() {
-            // 疯狂结局 - 神智耗尽，看到不该看的东西，彻底迷失
-            document.getElementById('game-ui').classList.remove('active');
-            const collapseScreen = document.createElement('div');
-            collapseScreen.id = 'collapse-screen';
-            collapseScreen.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:#0a0a0a;display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:3000;';
-            
-            const phase1 = document.createElement('div');
-            phase1.style.cssText = 'color:#e8e0d5;font-size:18px;line-height:2;text-align:center;padding:20px;opacity:0;transition:opacity 2s;';
-            phase1.innerHTML = '你的意识开始瓦解......<br>眼前的世界变得支离破碎......<br><br>你看到了——<br><span style="color:#3d1a4a;font-size:28px;font-family:\'Ma Shan Zheng\';">它们一直在那里。</span><br><br>在山的深处。在云的背后。在每一块石头、每一棵树、每一个微笑的后面。<br><span style="color:#8B0000;">它们在笑。</span>';
-            
-            collapseScreen.appendChild(phase1);
-            document.body.appendChild(collapseScreen);
-            
-            setTimeout(() => phase1.style.opacity = '1', 100);
-            
-            setTimeout(() => {
-                phase1.innerHTML = '你的名字是什么？<br><br>你在哪里？<br><br>你是<span style="color:#8B0000;">谁</span>？<br><br><span style="font-size:14px;color:#666;">你已经不记得了。</span>';
-            }, 5000);
-            
-            setTimeout(() => {
-                collapseScreen.remove();
-                showEnding({
-                    title: '疯狂结局：永恒深渊',
-                    text: '你的神智彻底崩溃了。你不再是你——你变成了无数碎片，散落在青云宗的每一个角落。你看到了不应该被看到的东西，而代价是你永远无法再理解什么是"正常"。在世人眼中，你成为了那些徘徊在山间的游魂之一。但你不在乎了。因为你已经不知道"在乎"是什么意思了。'
-                });
-            }, 10000);
-        }
-        
-        function triggerCorruptionMax() {
-            // 堕落结局加速 - 污染满值，直接通往太岁
-            document.getElementById('game-ui').classList.remove('active');
-            const corruptScreen = document.createElement('div');
-            corruptScreen.id = 'corrupt-screen';
-            corruptScreen.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(180deg,#1a0a0a,#0a0a0a);display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:3000;';
-            
-            const bloodText = document.createElement('div');
-            bloodText.style.cssText = 'color:#8B0000;font-family:\'Ma Shan Zheng\';font-size:48px;text-align:center;opacity:0;transition:opacity 2s;text-shadow:0 0 30px rgba(139,0,0,0.8);';
-            bloodText.innerHTML = '太岁感应到了你。<br><br>它在呼唤你。<br><br>你——在回应。';
-            corruptScreen.appendChild(bloodText);
-            document.body.appendChild(corruptScreen);
-            
-            setTimeout(() => bloodText.style.opacity = '1', 100);
-            
-            setTimeout(() => {
-                bloodText.innerHTML = '你的身体不再是你的。<br>你的思想不再是你的。<br><br>从今天起，你有一个新的名字——<br><span style="font-size:72px;">眷属</span>';
-            }, 4000);
-            
-            setTimeout(() => {
-                corruptScreen.remove();
-                showEnding({
-                    title: '堕落结局：太岁之躯',
-                    text: '污染彻底侵蚀了你的身心。太岁的力量在你体内流淌，你获得了前所未有的力量——代价是你作为人的一切。你不再是你了。你成为了太岁的代言人，成为了那些潜伏在青云宗阴影中的眷属之一。而这，仅仅是个开始......'
-                });
-            }, 8000);
         }
         
         function showChoices(choices) {
@@ -2462,6 +1973,7 @@
                 btn.style.animationDelay = (index * 0.15) + 's';
                 
                 let buttonText = choice.text;
+                if (choice.cost) buttonText += '<span class="choice-cost">' + choice.cost + '</span>';
                 btn.innerHTML = buttonText;
                 
                 btn.onclick = () => makeChoice(choice);
@@ -2498,7 +2010,6 @@
             });
             updateStatusBars();
             updateVisualEffects();
-            checkExtremeStates();
         }
         
         function handleMissingScene(actionId) {
@@ -2527,57 +2038,11 @@
         }
         
         function updateVisualEffects() {
-            const bloodVignette = document.getElementById('blood-vignette');
-            const corruptionVignette = document.getElementById('corruption-vignette');
-            const sanityVignette = document.getElementById('sanity-vignette');
-            
-            // 血红色边框 - 污染 > 30
+            const vignette = document.getElementById('blood-vignette');
             if (gameState.corruption > 30) {
-                bloodVignette.classList.add('active');
-                bloodVignette.style.opacity = Math.min(0.8, (gameState.corruption - 30) / 70);
+                vignette.classList.add('active');
             } else {
-                bloodVignette.classList.remove('active');
-                bloodVignette.style.opacity = 0;
-            }
-            
-            // 污染警告 - 80-99
-            if (gameState.corruption >= 80 && gameState.corruption < 100) {
-                corruptionVignette.style.opacity = (gameState.corruption - 80) / 20;
-                corruptionVignette.classList.add('corruption-warning-overlay');
-                corruptionVignette.classList.remove('corruption-max-overlay');
-            } else if (gameState.corruption >= 100) {
-                corruptionVignette.style.opacity = 1;
-                corruptionVignette.classList.remove('corruption-warning-overlay');
-                corruptionVignette.classList.add('corruption-max-overlay');
-            } else {
-                corruptionVignette.style.opacity = 0;
-                corruptionVignette.classList.remove('corruption-warning-overlay', 'corruption-max-overlay');
-            }
-            
-            // 神智警告 - 低于20
-            if (gameState.sanity <= 20 && gameState.sanity > 0) {
-                sanityVignette.style.opacity = (20 - gameState.sanity) / 20;
-                const sanityVal = document.getElementById('sanity-value');
-                const sanityBar = document.getElementById('sanity-bar');
-                if (sanityVal) sanityVal.classList.add('sanity-critical');
-                if (sanityBar) sanityBar.classList.add('sanity-critical');
-            } else {
-                sanityVignette.style.opacity = 0;
-                const sanityVal = document.getElementById('sanity-value');
-                const sanityBar = document.getElementById('sanity-bar');
-                if (sanityVal) sanityVal.classList.remove('sanity-critical');
-                if (sanityBar) sanityBar.classList.remove('sanity-critical');
-            }
-            
-            // 污染值临界高亮
-            const corruptionVal = document.getElementById('corruption-value');
-            const corruptionBar = document.getElementById('corruption-bar');
-            if (gameState.corruption >= 80) {
-                if (corruptionVal) corruptionVal.classList.add('corruption-critical');
-                if (corruptionBar) corruptionBar.classList.add('corruption-critical');
-            } else {
-                if (corruptionVal) corruptionVal.classList.remove('corruption-critical');
-                if (corruptionBar) corruptionBar.classList.remove('corruption-critical');
+                vignette.classList.remove('active');
             }
         }
         
