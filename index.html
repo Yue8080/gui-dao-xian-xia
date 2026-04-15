@@ -2146,7 +2146,6 @@
                 btn.style.animationDelay = (index * 0.15) + 's';
                 
                 let buttonText = choice.text;
-                if (choice.cost) buttonText += '<span class="choice-cost">' + choice.cost + '</span>';
                 btn.innerHTML = buttonText;
                 
                 btn.onclick = () => makeChoice(choice);
