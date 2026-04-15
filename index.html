@@ -2104,7 +2104,7 @@
             gameState.visitedScenes.push(sceneId);
             
             // 切换场景背景
-            updateSceneBackground(scene);
+            updateSceneBackground(scene, sceneId);
             
             // 显示立绘（如果场景有的话）
             updateScenePortrait(scene);
@@ -2199,7 +2199,7 @@
             'default': 'https://images.unsplash.com/photo-1501691223387-dd0500403074?w=1920&q=80'
         };
         
-        function updateSceneBackground(scene) {
+        function updateSceneBackground(scene, sceneId) {
             const bg = document.getElementById('scene-bg');
             const imgUrl = scene.bg || sceneBackgrounds[sceneId] || sceneBackgrounds['default'];
             if (bg.style.backgroundImage !== `url("${imgUrl}")`) {
